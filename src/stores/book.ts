@@ -5,14 +5,13 @@ export const useBookStore = defineStore({
   id: "book",
   state: () => ({
     books: [],
-    currentBook: [],
   }),
 
   actions: {
     async getAllBooks() {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/books?expand=category&expand=author"
+          "http://localhost:4000/books?expand=category&expand=author&expand=editor"
         );
         this.books = data;
         return Promise.resolve();
@@ -29,8 +28,6 @@ export const useBookStore = defineStore({
           `http://localhost:4000/books/${id}?expand=category&expand=author`
         );
 
-        this.currentBook = data;
-        this.currentBook.quantity = 1;
         return Promise.resolve(data);
       } catch (e) {
         console.error(e);
@@ -39,11 +36,18 @@ export const useBookStore = defineStore({
         return Promise.reject("Erro desconhecido ao consultar 'Livro'");
       }
     },
-    async incrementQuantity() {
-      this.currentBook.quantity++;
-    },
-    async decrementQuantity() {
-      this.currentBook.quantity--;
+    async createBook(book: object) {
+      try {
+        const { data } = await axios.post(`http://localhost:4000/books`, book);
+
+        this.books.push(data);
+
+        return Promise.resolve(data);
+      } catch (e) {
+        console.error(e);
+
+        return Promise.reject(e);
+      }
     },
   },
 });

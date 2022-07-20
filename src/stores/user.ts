@@ -1,11 +1,8 @@
 import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
 import axios from "axios";
-import { usePurchaseStore } from "@/stores/purchase";
 
 import type { User } from "@/entities/user";
-
-const purchaseStore = usePurchaseStore();
 
 interface IState {
   loggedIn: boolean;
@@ -30,11 +27,6 @@ export const useUserStore = defineStore({
           this.loggedIn = true;
           this.user = data.data.user;
 
-          await purchaseStore.getFinishedPurchases(this.user.id);
-          await purchaseStore.getPendingPurchases(this.user.id);
-          await purchaseStore.getShoppingCart(this.user.id);
-
-          console.log("aaaa", this.user.id);
           return Promise.resolve();
         })
         .catch(() => {
@@ -59,11 +51,6 @@ export const useUserStore = defineStore({
     async logout() {
       this.loggedIn = false as boolean;
       this.user = {} as User;
-      purchaseStore.pendingPurchases = [];
-      purchaseStore.finishedPurchases = [];
-      purchaseStore.shoppingCart = [];
-
-      purchaseStore.currentPurchase = [];
     },
   },
 });

@@ -8,78 +8,32 @@ const bookStore = useBookStore();
 export const usePurchaseStore = defineStore({
   id: "purchase",
   state: () => ({
-    shoppingCart: useLocalStorage("purchase/shoppingCart", {}),
-    finishedPurchases: useLocalStorage("purchase/finishedPurchases", []),
-    pendingPurchases: useLocalStorage("purchase/pendingPurchases", []),
-    currentPurchase: {},
+    finishedPurchases: [],
   }),
 
   actions: {
-    async getShoppingCart(id: number) {
+    async getFinishedPurchases() {
       try {
         const { data } = await axios.get(
-          `http://localhost:4000/purchases?embed=purchasesItems&status=Carrinho&userId=${id}`
+          `http://localhost:4000/purchases?embed=purchasesItems&status=Realizado`
         );
 
-        if (data.length && data.length > 0) {
-          for (const i in data[0].purchasesItems) {
-            data[0].purchasesItems[i].book = await bookStore.getBookById(
-              data[0].purchasesItems[i].bookId
-            );
-          }
-        }
-
-        this.shoppingCart = data[0];
-
-        return Promise.resolve();
-      } catch (e) {
-        console.error(e);
-
-        if (e.response.status === 404)
-          return Promise.reject(e.response.statusText);
-
-        return Promise.reject("Erro desconhecido ao consultar 'Compras'");
-      }
-    },
-    async getPendingPurchases(id: number) {
-      try {
-        const { data } = await axios.get(
-          `http://localhost:4000/purchases?embed=purchasesItems&status=Pendente&userId=${id}`
-        );
+        console.log(data);
 
         if (data.length && data.length > 0) {
-          for (const i in data[0].purchasesItems) {
-            data[0].purchasesItems[i].book = await bookStore.getBookById(
-              data[0].purchasesItems[i].bookId
-            );
+          for (let iPurchase in data) {
+            data[iPurchase].totalItens = 0;
+            for (const iTem in data[iPurchase].purchasesItems) {
+              data[iPurchase].totalItens +=
+                data[iPurchase].purchasesItems[iTem].quantity;
+              console.log("book", data[iPurchase].purchasesItems[iTem].bookId);
+              data[iPurchase].purchasesItems[iTem].book =
+                await bookStore.getBookById(
+                  data[iPurchase].purchasesItems[iTem].bookId
+                );
+            }
           }
         }
-
-        this.pendingPurchases = data;
-
-        return Promise.resolve();
-      } catch (e) {
-        console.error(e);
-
-        if (e.response.status === 404)
-          return Promise.reject(e.response.statusText);
-        return Promise.reject("Erro desconhecido ao consultar 'Compras'");
-      }
-    },
-    async getFinishedPurchases(id: number) {
-      try {
-        const { data } = await axios.get(
-          `http://localhost:4000/purchases?embed=purchasesItems&status=Realizado&userId=${id}`
-        );
-
-        if (data.length && data.length > 0) {
-          for (const i in data[0].purchasesItems) {
-            data[0].purchasesItems[i].book = await bookStore.getBookById(
-              data[0].purchasesItems[i].bookId
-            );
-          }
-        }
-
         this.finishedPurchases = data;
 
         return Promise.resolve();
@@ -112,111 +66,6 @@ export const usePurchaseStore = defineStore({
         if (e.response.status === 404)
           return Promise.reject(e.response.statusText);
         return Promise.reject("Erro desconhecido ao consultar 'Compra'");
-      }
-    },
-    async realizePurchase(item: Object, userId: number) {
-      return await this.createPurchase(userId, "Pendente")
-        .then(async (dataPurchase) => {
-          // Adiciona os itens na compra
-          return await this.createPurchaseItem(dataPurchase.id, item).then(
-            (dataItem) => {
-              dataPurchase.purchasesItems = [dataItem];
-              this.pendingPurchases.push(dataPurchase);
-              return Promise.resolve(dataPurchase);
-            }
-          );
-        })
-        .catch((error) => {
-          return Promise.reject("Erro ao realizar compra");
-          console.log(error);
-        });
-    },
-
-    async addItemToCar(item: Object, userId: number) {
-      if (Object.keys(this.shoppingCart).length !== 0) {
-        await this.createPurchaseItem(this.shoppingCart.id, item).then(
-          (dataItem) => {
-            this.shoppingCart.purchasesItems.push(dataItem);
-            return Promise.resolve(dataItem);
-          }
-        );
-      } else {
-        return await this.createPurchase(userId, "Carrinho")
-          .then(async (dataPurchase) => {
-            // Adiciona os itens na compra
-            return await this.createPurchaseItem(dataPurchase.id, item).then(
-              (dataItem) => {
-                dataPurchase.purchasesItems = [dataItem];
-                this.shoppingCart = dataPurchase;
-
-                return Promise.resolve(dataPurchase);
-              }
-            );
-          })
-          .catch((error) => {
-            return Promise.reject("Erro ao realizar compra");
-            console.log(error);
-          });
-      }
-    },
-
-    async createPurchase(userId: number, status: string) {
-      try {
-        const { data } = await axios.post("http://localhost:4000/purchases", {
-          userId: userId,
-          status: status,
-        });
-
-        return Promise.resolve(data);
-      } catch (e) {
-        console.error(e);
-        return Promise.reject("Erro desconhecido ao criar 'Compra'");
-      }
-    },
-
-    async createPurchaseItem(purchaseId: number, item: Object) {
-      try {
-        const { data } = await axios.post(
-          "http://localhost:4000/purchasesItems",
-          {
-            bookId: item.id,
-            quantity: item.quantity,
-            purchaseId: purchaseId,
-          }
-        );
-
-        data.book = await bookStore.getBookById(data.bookId);
-
-        return Promise.resolve(data);
-      } catch (e) {
-        console.error(e);
-        return Promise.reject("Item adicionado no carrinho com sucesso");
-      }
-    },
-
-    async finishedPurchase(id: number) {
-      try {
-        const { data } = await axios.put(
-          `http://localhost:4000/purchases/${id}`,
-          { status: "Realizado" }
-        );
-
-        const index = this.pendingPurchases.findIndex(
-          (purchase) => purchase.id === id
-        );
-
-        const finishedPurchase = Object.assign(this.pendingPurchases[index]);
-        finishedPurchase.status = "Realizado";
-
-        this.finishedPurchases.push(finishedPurchase);
-        this.pendingPurchases.splice(index, 1);
-
-        return Promise.resolve();
-      } catch (e) {
-        console.error(e);
-        if (e.response.status === 404)
-          return Promise.reject(e.response.statusText);
-        return Promise.reject("Erro desconhecido ao confirmar 'Compra'");
       }
     },
   },

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useBookStore } from "@/stores/book";
+import { usePurchaseStore } from "@/stores/purchase";
 
-const booksStore = useBookStore();
+const purchaseStore = usePurchaseStore();
 
 onMounted(() => {
-  booksStore.getAllBooks();
+  purchaseStore.getFinishedPurchases();
 });
 </script>
 
@@ -18,37 +18,44 @@ onMounted(() => {
           <div class="text-subtitle3">Fiinalizadas</div>
         </q-card-section>
 
-        <q-markup-table>
-          <thead>
+        <q-markup-table
+          v-for="purchase of purchaseStore.finishedPurchases"
+          v-bind:key="purchase"
+          class="q-ma-lg q-pa-md bg-grey-3"
+        >
+          <div class="text-h7 q-ma-md">Venda N.º {{ purchase.id }}</div>
+
+          <tbody class="bg-grey-2">
             <tr class="shadow-2 rounded-borders">
-              <th class="text-left">Capa</th>
-              <th class="text-center">Titulo</th>
-              <th class="text-center">Avaliação</th>
-              <th class="text-right">Valor</th>
+              <th class="text-left">Id</th>
+              <th>Capa</th>
+              <th>Tituulo</th>
+              <th>Quantidade</th>
             </tr>
-          </thead>
-          <tbody>
-            <tr class="shadow-2 rounded-borders" style="height: 60px">
-              <td class="text-left">
-                <q-card>
-                  <q-img src="src/assets/imgs/books/O-Nome-do-Vento.jpg" />
+            <tr
+              v-for="book of purchase.purchasesItems"
+              v-bind:key="book"
+              class="shadow-2 rounded-borders"
+              style="height: 50px"
+            >
+              <td>{{ book.id }}</td>
+              <td style="width: 120px">
+                <q-card style="height: 90px">
+                  <q-img :src="book.img" />
                 </q-card>
               </td>
-              <td class="text-center"><b>Titulo</b></td>
               <td class="text-center">
-                <q-rating
-                  v-model="text"
-                  max="5"
-                  size="1.5em"
-                  color="yellow"
-                  icon="star_border"
-                  icon-selected="star"
-                  icon-half="star_half"
-                  readonly
-                  no-dimming
-                />
+                {{ book.book ? book.book.title : "" }}
               </td>
-              <td class="text-right">24</td>
+              <td class="text-center">
+                {{ book.quantity }}
+              </td>
+            </tr>
+            <tr class="shadow-1 rounded-borders">
+              <th></th>
+              <th></th>
+              <th class="text-right">Qtd Total:</th>
+              <th>{{ purchase.totalItens }}</th>
             </tr>
           </tbody>
         </q-markup-table>

@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+import { useUserStore } from "@/stores/user";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -14,24 +16,44 @@ const router = createRouter({
           component: () => import("@/views/HomeView.vue"),
         },
         {
-          path: "comprar/:id",
-          name: "purchase",
-          component: () => import("@/views/PurchaseView.vue"),
+          path: "livros",
+          name: "books",
+          component: () => import("@/views/BooksView.vue"),
         },
         {
-          path: "carrinho/:id",
-          name: "shopping-cart",
-          component: () => import("@/views/ShoppingCartView.vue"),
+          path: "livroAdd",
+          name: "bookAdd",
+          component: () => import("@/views/BookAdd.vue"),
         },
         {
-          path: "compraFinalizada/:id",
-          name: "purchaseFinished",
-          component: () => import("@/views/PurchaseFinishedView.vue"),
+          path: "editoras",
+          name: "editors",
+          component: () => import("@/views/EditorsView.vue"),
         },
         {
-          path: "compraDetalhes/:id",
-          name: "purchaseReview",
-          component: () => import("@/views/PurchaseReviewView.vue"),
+          path: "editoraAdd",
+          name: "editorAdd",
+          component: () => import("@/views/EditorAdd.vue"),
+        },
+        {
+          path: "categorias",
+          name: "categories",
+          component: () => import("@/views/CategoriesView.vue"),
+        },
+        {
+          path: "categoriaAdd",
+          name: "categoryAdd",
+          component: () => import("@/views/CategoryAdd.vue"),
+        },
+        {
+          path: "autores",
+          name: "authors",
+          component: () => import("@/views/AuthorsView.vue"),
+        },
+        {
+          path: "autorAdd",
+          name: "authorAdd",
+          component: () => import("@/views/AuthorAdd.vue"),
         },
       ],
     },
@@ -50,6 +72,18 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach;
+router.beforeEach(async (to, from) => {
+  const userStore = useUserStore();
+
+  if (
+    // make sure the user is authenticated
+    !userStore.loggedIn &&
+    // ❗️ Avoid an infinite redirect
+    to.name !== "login"
+  ) {
+    // redirect the user to the login page
+    return { name: "login" };
+  }
+});
 
 export default router;

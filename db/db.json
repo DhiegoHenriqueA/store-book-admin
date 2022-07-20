@@ -1,4 +1,4 @@
-{
+f{
   "users": [
     {
       "email": "dhiego.azevedo17@gmail.com",
@@ -142,110 +142,10 @@
     }
   ],
   "purchases": [
-    {
-      "status": "Realizado",
-      "id": 1
-    },
-    {
-      "userId": 2,
-      "status": "Carrinho",
-      "id": 2
-    },
-    {
-      "status": "Realizado",
-      "id": 3
-    },
-    {
-      "status": "Realizado",
-      "id": 4
-    },
-    {
-      "status": "Realizado",
-      "id": 5
-    },
-    {
-      "userId": 2,
-      "status": "Pendente",
-      "id": 6
-    },
-    {
-      "userId": 2,
-      "status": "Pendente",
-      "id": 7
-    }
+   
   ],
   "purchasesItems": [
-    {
-      "bookId": 1,
-      "quantity": 3,
-      "purchaseId": 1,
-      "id": 1
-    },
-    {
-      "bookId": 1,
-      "quantity": 3,
-      "purchaseId": 2,
-      "id": 2
-    },
-    {
-      "bookId": 1,
-      "quantity": 4,
-      "purchaseId": 3,
-      "id": 3
-    },
-    {
-      "bookId": 1,
-      "quantity": 2,
-      "purchaseId": 2,
-      "id": 4
-    },
-    {
-      "bookId": 1,
-      "quantity": 3,
-      "purchaseId": 4,
-      "id": 5
-    },
-    {
-      "bookId": 1,
-      "quantity": 4,
-      "purchaseId": 5,
-      "id": 6
-    },
-    {
-      "bookId": 1,
-      "quantity": 1,
-      "purchaseId": 2,
-      "id": 7
-    },
-    {
-      "bookId": 1,
-      "quantity": 4,
-      "purchaseId": 6,
-      "id": 8
-    },
-    {
-      "bookId": 1,
-      "quantity": 3,
-      "purchaseId": 2,
-      "id": 9
-    },
-    {
-      "bookId": 2,
-      "quantity": 4,
-      "purchaseId": 2,
-      "id": 10
-    },
-    {
-      "bookId": 3,
-      "quantity": 6,
-      "purchaseId": 7,
-      "id": 11
-    },
-    {
-      "bookId": 3,
-      "quantity": 7,
-      "purchaseId": 2,
-      "id": 12
-    }
+
+    
   ]
 }

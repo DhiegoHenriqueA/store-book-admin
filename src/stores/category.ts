@@ -20,8 +20,21 @@ export const useCategoryStore = defineStore({
         return Promise.reject("Erro desconhecido ao consultar 'Catgory'");
       }
     },
-    async add() {
-      this.categories = [];
+    async createCategory(category: object) {
+      try {
+        const { data } = await axios.post(
+          `http://localhost:4000/categories`,
+          category
+        );
+
+        this.categories.push(data);
+
+        return Promise.resolve(data);
+      } catch (e) {
+        console.error(e);
+
+        return Promise.reject(e);
+      }
     },
   },
 });

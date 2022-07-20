@@ -28,7 +28,11 @@
                 <q-icon :name="menuItem.icon" />
               </q-item-section>
               <q-item-section>
-                {{ menuItem.label }}
+                <router-link
+                  :to="{ name: `${menuItem.name}` }"
+                  style="text-decoration: none; color: black"
+                  >{{ menuItem.label }}</router-link
+                >
               </q-item-section>
             </q-item>
             <q-separator :key="'sep' + index" v-if="menuItem.separator" />
@@ -43,34 +47,40 @@
   </q-layout>
 </template>
 
-<script>
+<script lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const menuList = [
   {
     icon: "shopping_cart",
     label: "Vendas",
     separator: true,
+    name: "home",
   },
   {
     icon: "menu_book",
     label: "Livros",
     separator: false,
+    name: "books",
   },
   {
     icon: "person_2",
     label: "Autores",
     separator: false,
+    name: "authors",
   },
   {
     icon: "category",
     label: "Categorias",
     separator: false,
+    name: "categories",
   },
   {
     icon: "maps_home_work",
     label: "Editoras",
     separator: false,
+    name: "editors",
   },
 ];
 
