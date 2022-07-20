@@ -3,8 +3,14 @@ import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted, reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { useBookStore } from "@/stores/book";
+import { useCategoryStore } from "@/stores/category";
+import { useAuthorStore } from "@/stores/author";
+import { useEditorStore } from "@/stores/editor";
 
 const bookStore = useBookStore();
+const categoryStore = useCategoryStore();
+const authorStore = useAuthorStore();
+const editorStore = useEditorStore();
 
 const router = useRouter();
 
@@ -41,6 +47,7 @@ const createBook = () => {
       <div class="q-pa-md">
         <q-card-section>
           <div class="text-h6">Adicionar Livro</div>
+          {{ book }}
         </q-card-section>
         <q-form @submit="createBook()" @reset="onReset" class="q-gutter-md">
           <q-input filled v-model="book.title" label="Titulo" />
@@ -48,9 +55,36 @@ const createBook = () => {
 
           <q-input filled v-model="book.amount" label="Valor" />
           <q-input filled v-model="book.img" label="Caminho da imagem" />
-          <q-input filled v-model="book.categoryId" label="Autor" />
-          <q-input filled v-model="book.authorId" label="Autor" />
-          <q-input filled v-model="book.editorId" label="Editora" />
+          <q-select
+            map-options
+            emit-value
+            label="Selecione a categoria"
+            v-model="book.categoryId"
+            :options="categoryStore.categories"
+            option-label="name"
+            option-value="id"
+          >
+          </q-select>
+          <q-select
+            map-options
+            emit-value
+            label="Selecione o Autor"
+            v-model="book.authorId"
+            :options="authorStore.authors"
+            option-label="name"
+            option-value="id"
+          >
+          </q-select>
+          <q-select
+            map-options
+            emit-value
+            label="Selecione a Editora"
+            v-model="book.editorId"
+            :options="editorStore.editors"
+            option-label="name"
+            option-value="id"
+          >
+          </q-select>
 
           <div class="row justify-end">
             <q-btn label="Salvar" color="primary" type="submit" />
