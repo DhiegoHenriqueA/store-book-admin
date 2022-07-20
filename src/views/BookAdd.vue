@@ -27,8 +27,8 @@ const book = ref({
   editorId: "",
 });
 
-const createBook = () => {
-  bookStore
+const createBook = async () => {
+  await bookStore
     .createBook(book.value)
     .then((data) => {
       router.push({
@@ -39,6 +39,12 @@ const createBook = () => {
       alert(error);
     });
 };
+
+onMounted(() => {
+  categoryStore.getAllCategories();
+  authorStore.getAllAuthor();
+  editorStore.getAllEditor();
+});
 </script>
 
 <template>

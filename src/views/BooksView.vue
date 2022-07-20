@@ -4,8 +4,8 @@ import { useBookStore } from "@/stores/book";
 
 const bookStore = useBookStore();
 
-onMounted(() => {
-  bookStore.getAllBooks();
+onMounted(async () => {
+  await bookStore.getAllBooks();
 });
 </script>
 

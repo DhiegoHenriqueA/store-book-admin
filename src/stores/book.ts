@@ -40,8 +40,7 @@ export const useBookStore = defineStore({
       try {
         const { data } = await axios.post(`http://localhost:4000/books`, book);
 
-        this.books.push(data);
-
+        await this.getAllBooks();
         return Promise.resolve(data);
       } catch (e) {
         console.error(e);

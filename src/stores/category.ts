@@ -27,7 +27,7 @@ export const useCategoryStore = defineStore({
           category
         );
 
-        this.categories.push(data);
+        await this.getAllCategories();
 
         return Promise.resolve(data);
       } catch (e) {
